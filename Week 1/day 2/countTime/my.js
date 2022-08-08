@@ -2,22 +2,29 @@ let input = document.querySelector("#input");
 let btn = document.querySelector("#btn");
 let result = document.querySelector(".result");
 btn.addEventListener("click", handle);
-function handle(callback) {
+function handle() {
   let value = input.value;
-  return new Promise((resolve, reject) => {
-    setInterval(() => {
-      if (value > 0) {
-        render(value);
-        value--;
-        resolve();
-      } else {
-        reject("value < 0");
-      }
-    }, 2000);
+  let promise = new Promise((resolve, reject) => {
+    if (value > 0) {
+      resolve(value);
+    } else {
+      reject("value < 0");
+    }
   });
+
+  promise
+    .then((value) => {
+      setInterval(() => {
+        if (value > 0) {
+          render(value);
+          value--;
+        } else {
+          return;
+        }
+      }, 2000);
+    })
+    .catch((e) => console.log(e));
 }
 function render(value) {
   result.innerHTML = value;
 }
-handle
-.catch((e) => render(e));
