@@ -1,17 +1,12 @@
-async function isBirdDay(isSickKayo) {
-  if (isSickKayo) {
-    return 2;
-  }
-  throw Error("Kayo sick");
+axios = require("axios");
+
+function getJSONAPI() {
+  return new Promise(function (resolve) {
+    axios
+      .get("http://jsonplaceholder.typicode.com/posts/1")
+      .then(function (json) {
+        resolve(json.data);
+      });
+  });
 }
-async function somthing() {
-  try {
-    let result = await isBirdDay(false);
-    console.log(result);
-  } catch (e) {
-    console.log(e);
-  } finally {
-    console.log("Party");
-  }
-}
-somthing();
+getJSONAPI().then((result) => console.log(result));
