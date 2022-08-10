@@ -1,0 +1,19 @@
+{
+  "name": "render-info",
+  "version": "1.0.0",
+  "description": "",
+  "main": "my.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon my.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node": "^18.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19",
+    "qs": "^6.11.0"
+  }
+}
