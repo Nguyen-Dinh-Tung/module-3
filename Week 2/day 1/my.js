@@ -1,13 +1,16 @@
 const http = require("http");
-const url = require("url");
-const StringDecoder = require("string_decoder").StringDecoder;
-const server = http.createServer((req, res) => {
-  var parseUrl = url.parse(req.url, true);
-  var queryStringObject = parseUrl.query;
-
-  res.end("Hello Node Js");
-  console.log(queryStringObject);
+var url = require("url");
+var StringDecoder = require("string_decoder").StringDecoder;
+var server = http.createServer(function (req, res) {
+  var decoder = new StringDecoder("utf-8");
+  var buffer = "";
+  req.on("data", function (data) {
+    buffer += decoder.write(data);
+  });
+  req.on("end", function (end) {
+    buffer += decoder.end();
+    res.end("Hello Node Js");
+    console.log(buffer);
+  });
 });
-server.listen(3000, "localhost", () => {
-  console.log("3000 localhost");
-});
+server.listen(3000, "localhost");
