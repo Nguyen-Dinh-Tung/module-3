@@ -7,7 +7,7 @@ class ManagerController {
     this.getTemplate(req, res, pathName);
   }
   showManagerPage(req, res, pathName) {
-    fs.readFile("./src/public/manager.html", "utf-8", async (err, data) => {
+    fs.readFile(pathName, "utf-8", async (err, data) => {
       let dataJson = JSON.parse(await this.readFile());
       let html = "";
       dataJson.forEach((element, index) => {
@@ -22,6 +22,7 @@ class ManagerController {
         html += `<td>${element.name}</td>`;
         html += `<td>${role}</td>`;
         html += `<td><a href="/delete?${index}"><button type="submit">Xóa</button></a></td>`;
+        html += `<td><a href="/edit?${index}"><button type="submit">Sửa</button></a></td>`;
         html += `</tr>`;
       });
       data = data.replace("{list-user}", html);
@@ -53,12 +54,40 @@ class ManagerController {
       fs.writeFile("./data.json", dataLast, (err) => {
         console.log(err);
       });
-      this.showManagerPage(req, res, pathName);
+      res.setHeader("Cache-Control", "no-store");
       res.writeHead(301, {location: "/manager"});
+      this.showManagerPage(req, res, pathName);
       res.end();
     });
   }
-
+  showEditUser(req, res, pathName, index) {
+    fs.readFile(pathName, "utf-8", async (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+      res.writeHead(200, {"content-type": "text/html"});
+      res.write(data);
+      res.end();
+    });
+  }
+  editUser(req, res, index, pathName) {
+    let data = "";
+    req.on("data", (chunk) => {
+      data += chunk;
+    });
+    req.on("end", async () => {
+      let user = qs.parse(data);
+      let dataJson = JSON.parse(await this.readFile());
+      dataJson[index].name = user.name;
+      let dataLast = JSON.stringify(dataJson);
+      fs.writeFile("./data.json", dataLast, (err) => {
+        console.log(err);
+      });
+      res.writeHead(301, {location: "/manager"});
+      this.showManagerPage(req, res, pathName);
+      res.end();
+    });
+  }
   writeToJson(req, res, path) {
     let data = "";
     req.on("data", (chunk) => {
@@ -66,7 +95,7 @@ class ManagerController {
     });
     req.on("end", async () => {
       let user = qs.parse(data);
-      let dataRFJson = await this.readFile(path);
+      let dataRFJson = await this.readFile();
       let dataJson = JSON.parse(dataRFJson);
       dataJson.push(user);
       dataJson.forEach((element, index) => {

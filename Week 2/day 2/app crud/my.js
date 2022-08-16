@@ -10,6 +10,7 @@ let path = [
   "./register.html",
   "./src/public/manager.html",
   "data.json",
+  "./src/public/editUser.html",
 ];
 let manager = new ManagerController();
 
@@ -19,7 +20,6 @@ const server = http.createServer((req, res) => {
   switch (urlPath.pathname) {
     case "/":
       manager.showPage(req, res, path[0]);
-      console.log(url);
       break;
     case "/register":
       if (method == "GET") {
@@ -30,12 +30,18 @@ const server = http.createServer((req, res) => {
       break;
     case "/manager":
       manager.showManagerPage(req, res, path[2]);
-      if (method == "GET") {
-      }
       break;
     case "/delete":
       let index = urlPath.query;
       manager.deleteAcount(req, res, path[2], index);
+      break;
+    case "/edit":
+      let id = urlPath.query;
+      if (method == "GET") {
+        manager.showEditUser(req, res, path[4], id);
+      } else {
+        manager.editUser(req, res, id, path[2]);
+      }
       break;
     default:
       res.end();
